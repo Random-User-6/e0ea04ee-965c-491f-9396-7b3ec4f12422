@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>JSON Filter</title>
+    <style>
+      body {
+        font-family: sans-serif;
+        margin: 2em;
+      }
+      textarea {
+        width: 100%;
+        height: 300px;
+      }
+      input[type="text"] {
+        width: 200px;
+      }
+      button {
+        padding: 0.5em 1em;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Paste JSON to Filter</h1>
+    <label
+      >Keyword:
+      <input type="text" id="keyword" value="--insert text to search--"
+    /></label>
+    <label
+      ><input type="checkbox" id="caseSensitive" checked /> Case
+      Sensitive</label
+    >
+    <br /><br />
+    <textarea id="jsonInput" placeholder="Paste your JSON here..."></textarea>
+    <br />
+    <button onclick="submitJson()">Submit</button>
+    <!-- <pre id="summary"></pre> -->
+    <div id="summary-container">
+      <pre
+        id="summary"
+        style="font-family: monospace; white-space: pre-wrap"
+      ></pre>
+    </div>
+
+    <script>
+      async function submitJson() {
+        const rawJson = document.getElementById("jsonInput").value;
+        const keyword = document.getElementById("keyword").value;
+        const caseSensitive = document.getElementById("caseSensitive").checked;
+
+        try {
+          const response = await fetch("/filter", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ rawJson, keyword, caseSensitive }),
+          });
+
+          const result = await response.text();
+          // document.getElementById("summary").textContent = result;
+          document.getElementById("summary").innerHTML = result;
+        } catch (err) {
+          document.getElementById("summary").textContent =
+            "Error: " + err.message;
+        }
+      }
+    </script>
+  </body>
+</html>
