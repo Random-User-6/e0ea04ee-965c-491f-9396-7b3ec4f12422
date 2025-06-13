@@ -72,7 +72,11 @@ app.post('/filter', (req, res) => {
       _embedded: { items: filtered }
     };
 
+    //fs.writeFileSync(filePath, JSON.stringify(result, null, 2));
     fs.writeFileSync(filePath, JSON.stringify(result, null, 2));
+    console.log(`✅ File written to: ${filePath}`);
+    console.log(`✅ Folder exists: ${fs.existsSync(folderPath)}`);
+    console.log(`✅ File exists: ${fs.existsSync(filePath)}`);
 
     const fileUrl = `/${folderName}/${filename}`;
     const summary = [
