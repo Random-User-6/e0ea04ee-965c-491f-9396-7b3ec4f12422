@@ -80,9 +80,10 @@ app.post('/filter', (req, res) => {
 
     const fileUrl = `/${folderName}/${filename}`;
     const summary = [
+      `<br><br>📁 JSON output saved in <a href="${fileUrl}" target="_blank">${folderName}/${filename}</a>`,
       `✅ ${filtered.length} match${filtered.length === 1 ? '' : 'es'} for '${queryWord}':`,
-      ...filtered.map(item => '  ' + item.name),
-      `<br><br>📁 JSON output saved in <a href="${fileUrl}" target="_blank">${folderName}/${filename}</a>`
+      ...filtered.map(item => '  ' + item.name)
+      
 
     ].join('<br>');
 
