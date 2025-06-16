@@ -88,19 +88,19 @@
 
   <script>
     // Pretty-print JSON input on paste
-    document.getElementById('jsonInput').addEventListener('paste', () => {
-      setTimeout(() => {
-        try {
-          const inputBox = document.getElementById('jsonInput');
-          const raw = inputBox.value;
-          const parsed = JSON.parse(raw);
-          const pretty = JSON.stringify(parsed, null, 2);
-          inputBox.value = pretty;
-        } catch (e) {
-          // Ignore if invalid
-        }
-      }, 100);
-    });
+    // document.getElementById('jsonInput').addEventListener('paste', () => {
+    //   setTimeout(() => {
+    //     try {
+    //       const inputBox = document.getElementById('jsonInput');
+    //       const raw = inputBox.value;
+    //       const parsed = JSON.parse(raw);
+    //       const pretty = JSON.stringify(parsed, null, 2);
+    //       inputBox.value = pretty;
+    //     } catch (e) {
+    //       // Ignore if invalid
+    //     }
+    //   }, 100);
+    // });
 
     async function submitJson() {
       const rawJson = document.getElementById('jsonInput').value;
