@@ -52,7 +52,7 @@
       background-color: #4477aa;
     }
 
-    pre#summary {
+    #summary {
       margin-top: 2em;
       background-color: #1e2a45;
       padding: 1em;
@@ -74,9 +74,24 @@
 
   <button onclick="submitJson()">Submit</button>
 
-  <pre id="summary"></pre>
+  <div id="summary"></div>
 
   <script>
+    // Pretty-print JSON input on paste
+    document.getElementById('jsonInput').addEventListener('paste', () => {
+      setTimeout(() => {
+        try {
+          const inputBox = document.getElementById('jsonInput');
+          const raw = inputBox.value;
+          const parsed = JSON.parse(raw);
+          const pretty = JSON.stringify(parsed, null, 2);
+          inputBox.value = pretty;
+        } catch (e) {
+          // Ignore if invalid
+        }
+      }, 100);
+    });
+
     async function submitJson() {
       const rawJson = document.getElementById('jsonInput').value;
       const keyword = document.getElementById('keyword').value;
@@ -90,9 +105,9 @@
         });
 
         const result = await response.text();
-        document.getElementById('summary').textContent = result;
+        document.getElementById('summary').innerHTML = result;
       } catch (err) {
-        document.getElementById('summary').textContent = 'Error: ' + err.message;
+        document.getElementById('summary').innerHTML = '❌ Error: ' + err.message;
       }
     }
   </script>
