@@ -1,68 +1,124 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <title>JSON Filter</title>
-    <style>
-      body {
-        font-family: sans-serif;
-        margin: 2em;
-      }
-      textarea {
-        width: 100%;
-        height: 300px;
-      }
-      input[type="text"] {
-        width: 200px;
-      }
-      button {
-        padding: 0.5em 1em;
-      }
-    </style>
-  </head>
-  <body>
-    <h1>Paste JSON to Filter</h1>
-    <label
-      >Keyword:
-      <input type="text" id="keyword" value="--insert text to search--"
-    /></label>
-    <label
-      ><input type="checkbox" id="caseSensitive" checked /> Case
-      Sensitive</label
-    >
-    <br /><br />
-    <textarea id="jsonInput" placeholder="Paste your JSON here..."></textarea>
-    <br />
-    <button onclick="submitJson()">Submit</button>
-    <!-- <pre id="summary"></pre> -->
-    <div id="summary-container">
-      <pre
-        id="summary"
-        style="font-family: monospace; white-space: pre-wrap"
-      ></pre>
-    </div>
+<head>
+  <meta charset="UTF-8" />
+  <title>JSON Keyword Parser</title>
+  <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/stackoverflow-dark.min.css">
+  <style>
+    body {
+      background-color: #0d1a33;
+      color: #e6e6e6;
+      font-family: Consolas, monospace;
+      padding: 2em;
+    }
 
-    <script>
-      async function submitJson() {
-        const rawJson = document.getElementById("jsonInput").value;
-        const keyword = document.getElementById("keyword").value;
-        const caseSensitive = document.getElementById("caseSensitive").checked;
+    h1 {
+      color: #66ccff;
+    }
 
+    label {
+      font-weight: bold;
+    }
+
+    input[type="text"], textarea {
+      width: 100%;
+      padding: 0.6em;
+      font-family: monospace;
+      font-size: 0.95em;
+      color: #f0f0f0;
+      background-color: #1e2a45;
+      border: 1px solid #333;
+      border-radius: 4px;
+    }
+
+    textarea {
+      height: 300px;
+      resize: vertical;
+      overflow: auto;
+      white-space: pre;
+    }
+
+    button {
+      margin-top: 1em;
+      padding: 0.6em 1em;
+      font-size: 1em;
+      background-color: #336699;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #4477aa;
+    }
+
+    #summary {
+      margin-top: 2em;
+      background-color: #1e2a45;
+      padding: 1em;
+      white-space: pre-wrap;
+      border-left: 4px solid #336699;
+    }
+
+    .hljs {
+      background: none !important;
+    }
+  </style>
+</head>
+<body>
+  <h1>Paste JSON to Filter</h1>
+
+  <label for="keyword">Keyword:</label>
+  <input type="text" id="keyword" value="HOOP">
+
+  <label><input type="checkbox" id="caseSensitive" checked> Case Sensitive</label>
+
+  <label for="jsonInput">JSON Input:</label>
+  <textarea id="jsonInput" placeholder="Paste JSON here..."></textarea>
+
+  <button onclick="submitJson()">Submit</button>
+
+  <div id="summary"><pre><code class="json" id="highlightBox"></code></pre></div>
+
+  <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+  <script>
+    async function submitJson() {
+      const rawJson = document.getElementById('jsonInput').value;
+      const keyword = document.getElementById('keyword').value;
+      const caseSensitive = document.getElementById('caseSensitive').checked;
+
+      try {
+        const response = await fetch('/filter', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ rawJson, keyword, caseSensitive })
+        });
+
+        const result = await response.text();
+        const summaryBox = document.getElementById('summary');
+        const highlightBox = document.getElementById('highlightBox');
+
+        summaryBox.style.display = "block";
+        highlightBox.innerHTML = result;
+        hljs.highlightElement(highlightBox);
+      } catch (err) {
+        document.getElementById('summary').textContent = 'Error: ' + err.message;
+      }
+    }
+
+    // Auto-highlight on paste
+    document.getElementById('jsonInput').addEventListener('paste', (event) => {
+      setTimeout(() => {
         try {
-          const response = await fetch("/filter", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ rawJson, keyword, caseSensitive }),
-          });
-
-          const result = await response.text();
-          // document.getElementById("summary").textContent = result;
-          document.getElementById("summary").innerHTML = result;
-        } catch (err) {
-          document.getElementById("summary").textContent =
-            "Error: " + err.message;
+          const content = JSON.parse(document.getElementById('jsonInput').value);
+          const pretty = JSON.stringify(content, null, 2);
+          document.getElementById('jsonInput').value = pretty;
+        } catch (e) {
+          // Ignore malformed JSON
         }
-      }
-    </script>
-  </body>
+      }, 100);
+    });
+  </script>
+</body>
 </html>
