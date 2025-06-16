@@ -75,7 +75,7 @@
   <h1>Paste JSON to Filter</h1>
 
   <label for="keyword">Keyword:</label>
-  <input type="text" id="keyword" value="HOOP">
+  <input type="text" id="keyword" value="-- insert keyword to search here --">
 
   <label><input type="checkbox" id="caseSensitive" checked> Case Sensitive</label>
 
@@ -120,6 +120,10 @@
         document.getElementById('summary').innerHTML = '❌ Error: ' + err.message;
       }
     }
+
+    document.getElementById('keyword').addEventListener('focus', function () {
+      this.value = '';
+    });
   </script>
 </body>
 </html>
