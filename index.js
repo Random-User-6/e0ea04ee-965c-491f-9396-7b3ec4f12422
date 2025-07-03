@@ -7,7 +7,7 @@ let pasteTimeout = null;
 const delayMs = 300;
 const fs = require("fs");
 const path = require("path");
-const RETENTION_DAYS = 30;
+const RETENTION_DAYS = 1;
 
 const express = require("express");
 const app = express();
